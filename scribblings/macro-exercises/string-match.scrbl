@@ -162,10 +162,15 @@ Here is an example use of @racket[string-match]:
     (string-match str
       [(a "--" b " " c " end") (list (string->symbol a) (string->number b) c)]
       [("the " object " is " adjective) (~a adjective " " object)] 
-      [("whole-string") 'whole]
-      [else 'no-match-found])))
+      [("whole-string") 'whole])))
 
-This should roughly expand into the following code:
+You can see that @racket[string-match] looks remarkably like match. The only thing that is different
+is the pattern syntax, which is composed of a sequence of strings and identifiers. Each pattern should
+be compiled into a regular expression by embedding string literals directly into the result using
+@racket[regexp-quote], and identifiers should become capture groups of zero or more characters,
+@racketvalfont{(.*)}.
+
+To illustrate the above rules, that example should roughly expand into the following code:
 
 @(racketblock
   (define (sm str)
