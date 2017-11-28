@@ -8,3 +8,4 @@
 @include-section{threading-1.scrbl}
 @include-section{threading-2.scrbl}
 @include-section{string-match.scrbl}
+@include-section{exhaustive-enumerations.scrbl}
