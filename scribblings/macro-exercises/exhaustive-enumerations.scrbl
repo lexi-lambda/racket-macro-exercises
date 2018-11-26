@@ -19,8 +19,8 @@ week, a set of well-known colors, different blending modes, or all sorts of othe
 
 In Racket, ordinary Racket @reftech{symbols} are often used for this purpose. For example, one might
 represent a day of the week using the symbols @racket['sunday], @racket['monday], @racket['tuesday],
-etc. It’s possible to use Racket’s @racket[case] form to perform branching on symbols, so we could use
-it to write a function that checks if a day of the week is a weekend or not:
+etc. It’s possible to use Racket’s @racket[case] form to branch on the value of a symbol, so we could
+use it to write a function that checks if a day of the week is a weekend or not:
 
 @(racketblock
   (define (weekend? day)
@@ -28,9 +28,9 @@ it to write a function that checks if a day of the week is a weekend or not:
       [(saturday sunday) #t]
       [(monday tuesday wednesday thursday friday) #f])))
 
-For the purposes of this exercise, we’ll use a simpler, sillier example: an enumeration of animals,
+For the purposes of this exercise, we’ll use a smaller, sillier example: an enumeration of animals,
 @racket['cat], @racket['dog], and @racket['cow]. We could write a function that accepts an animal and
-produces a string corresponding to the sound it makes. It might look like this:
+produces a string corresponding to the sound it makes:
 
 @(examples
   #:label #f
@@ -135,7 +135,7 @@ macro.
      #`(quote #,(syntax-local-value #'x))))
   (eval:check (quote-x) 3))
 
-Of course, this alone isn’t very useful. It becomes especially interesting, however, when we use
+Of course, this alone isn’t very useful. It becomes interesting, however, when we use
 @racket[syntax-local-value] on an identifier provided to the macro as a subform:
 
 @(examples

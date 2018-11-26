@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ev # exit with nonzero exit code if anything fails
 
-if [[ "$RACKET_VERSION" != '6.12' || "$TRAVIS_PULL_REQUEST" != 'false' || "$TRAVIS_BRANCH" != 'master' ]]; then
+if [[ "$RACKET_VERSION" != '7.1' || "$TRAVIS_PULL_REQUEST" != 'false' || "$TRAVIS_BRANCH" != 'master' ]]; then
   exit 0;
 fi
 

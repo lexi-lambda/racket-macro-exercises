@@ -6,8 +6,8 @@ env:
     - GH_REF: 'github.com/lexi-lambda/racket-macro-exercises.git'
     - secure: 'vCtPmJq6eas87a87lg7sTur35mm9J+7+uTXPygjMOY2UMhD3Kk8VaWFfrSYpYR4RBz27XUjpHTCMeKC8t9/rzPv7UaX5xX+YtgwHa0BzV+4GjAFBVUSX3owoNrUoNxYkQ/hyPApsXQaubwR1QZO5Ev+FzOmHxjyQwtbc6UxJlHNBcSAdEq5QTV7sAhvVgzDm/k6Qy8DmEMDhgRiUSw8/Qt2gsebECdFBASo4X/KKsNGPyjRmoHH63iCFtOG9CKSQiY5iy9uCGPj4RoJZzNAwx39CqDDfkwAJSmYvw8H7hee3PtqqnAh2cRgO3AALCC1nHHITprZZMafynmtRkSt9BWIn+2vQv4WVXb3dHRW6T/Lq4hW/cYIiB5eJyymylV+CGigB8EUazV5CAiiMIOdW9Ed5EVS4+v0vBqjavyL72ISUt7zoyZ5b5NVTVyqDkBxB72Qq7+yLb+ZGYF0gpPSnqj+O08utxxLP7XChyebOUBKMDIWAiUnKQgg9pTa96LzE8+zmCHQok3EbT3YiEAUf7LGttqbh5+1U/mmJxT7xHfrjmIH2NLdL8dDBFSLpb7ZeZ3z7MFu3owqM08s+8Jx4Hc2TUtxUXb1H+Wloryq4tofnvBfhSb4iyhPsUWPz/wWcPLmFeRRfSFaN+Rxm6L6NBuBR9Dv59jUizBPzvEgTf7c='
   matrix:
-    - RACKET_VERSION: '6.12'
-    - RACKET_VERSION: HEAD
+    - RACKET_VERSION=7.1
+    - RACKET_VERSION=HEAD
 
 before_install:
   - git clone https://github.com/greghendershott/travis-racket.git

@@ -18,12 +18,11 @@
   @hyperlink["https://groups.google.com/d/msg/racket-users/OXwXdmzAbf8/aLBBFsY2EgAJ"]{Racket mailing
   list}.}
 
-Sometimes, especially for scripting or solving coding puzzles, it can be extremely useful to have
-tools for parsing strings with a particular format. Regular expressions are often a great tool for
-that, but they can be difficult to read and unnecessarily involved to properly write capture groups
-and extract the results.
+Sometimes, especially for scripting or solving coding puzzles, it can be useful to have tools for
+parsing strings in a particular format. Regular expressions can serve that purpose, but they can be
+difficult to read, especially when capture groups are involved.
 
-It would be convenient to have a @racket[string-match] form, which could parse simple, common cases
+It could be convenient to have a @racket[string-match] form that’s able to parse simple, common cases
 without having the complexity (or power) of full regular expressions. For example, we might wish to
 parse lines with the following structure:
 
@@ -49,7 +48,7 @@ Using a special @racket[string-match] form, we could parse them like this:
                (16 "Bob" "a round number in base 2")
                (42 "Douglas" "the ultimate answer"))))
 
-A more complex example might supply small sentences with a simple, predefined structure:
+A slightly more complex example might involve small sentences with a simple, predefined structure:
 
 @filebox[
  "statements.txt"
@@ -77,24 +76,24 @@ In this exercise, you will implement @racket[string-match].
 
 @section[#:tag "string-match-implementation-strategy"]{Implementation strategy}
 
-How can we implement @racket[string-match]? It may seem like a complex macro, but fortunately, we
-don’t have to implement it from scratch. Racket’s macro system is highly composable, so we can easily
-reuse macros to implement our macro.
+How can we implement @racket[string-match]? It may seem like an involved macro, but fortunately, we
+don’t have to implement it from scratch. Racket’s macro system is compositional, so we can assemble
+most of it out of existing parts already provided by the standard library.
 
-With this in mind, we can consider what @racket[string-match] actually does. From a high level, it
-performs two tasks:
+With this in mind, consider what @racket[string-match] actually does. From a high level, it performs
+two distinct tasks:
 
 @nested[
  #:style 'inset
  @itemlist[
   #:style 'ordered
   @item{It matches strings against a particular pattern…}
-  @item{…then binds the results to variables.}]]
+  @item{…then binds matched substrings to variables.}]]
 
-Each of these goals can be handled using features already built in to Racket. For the first part, we
-can use @reftech{regular expressions} by @emph{compiling} our patterns to regular expressions as part
-of macroexpansion. For the second part, we can use @racket[match] from @racketmodname[racket/match],
-which conveniently already includes support for regular expressions.
+Each of these goals can be accomplished using existing Racket features. For the first part, we can use
+@reftech{regular expressions} by @emph{compiling} our patterns to regular expressions at compile-time.
+For the second part, we can use @racket[match] from @racketmodname[racket/match], which conveniently
+already supports matching strings against regular expressions.
 
 @subsection[#:tag "string-match-regexps-and-syntax"]{Regular expressions and syntax}
 
@@ -109,13 +108,14 @@ For proof, try syntax-quoting a regular expression literal:
 @(examples #:label #f
   #'#rx"[a-z]+")
 
-We can exploit this property to easily embed regular expressions in output syntax without much effort.
-We can dynamically create regular expressions from strings using the @racket[regexp] function:
+We can exploit this property to embed regular expressions in the output of a macro. To create these
+regular expressions in the first place, we can produce them from strings using the @racket[regexp]
+function:
 
 @(examples #:label #f
   (regexp "[a-z]+"))
 
-…and we can use @racket[regexp-quote] to safely embed constant strings inside a regular expression
+We can also use @racket[regexp-quote] to safely embed constant strings inside a regular expression
 without worrying about escaping special characters:
 
 @(examples #:label #f
@@ -128,21 +128,23 @@ into a regular expression literal that can be embedded in syntax:
   (datum->syntax #'here (regexp (string-append "hello" "-" "world"))))
 
 Using this technique, we can use @racket[regexp], @racket[regexp-quote], and @racket[datum->syntax] to
-compile our @racket[string-match] patterns into fast, efficient regexes.
+compile our @racket[string-match] patterns into fast, efficient regexps.
 
 @subsection[#:tag "string-match-pattern-matching"]{Pattern-matching with @racketmodname[racket/match]}
 
 Racket’s @racket[match] form is useful for all sorts of pattern-matching, including pattern-matching
-against regexes. Here’s what it looks like in action:
+against regexps. For example, it’s possible to parse a simple URL using the following @racket[match]
+expression:
 
 @(examples #:label #f #:once #:eval ((make-eval-factory '(racket/match)))
   (match "http://example.com/foobar"
     [(regexp #rx"^([^:]+)://([^/]+)/(.+)$" (list _ protocol hostname path))
      (list protocol hostname path)]))
 
-You can read the @racket[match] documentation for the full syntax, but the relevant piece is the
-@racket[(regexp _rx _pat)] pattern, where @racket[_rx] is a regular expression and @racket[_pat] is a
-pattern that will be matched against the results of the regex match.
+You can read the @racket[match] documentation for the full syntax, but the most relevant piece for our
+@racket[string-match] macro is the @racket[(regexp _rx _pat)] pattern, where @racket[_rx] is a regular
+expression and @racket[_pat] is a pattern that will be matched against the results of the regexp
+match.
 
 The syntax for @racket[match] is a little different from our @racket[string-match], since it uses
 regular expressions instead of inline sequences of strings and bindings. Still, it’s pretty close, and
@@ -164,9 +166,9 @@ Here is an example use of @racket[string-match]:
       [("the " object " is " adjective) (~a adjective " " object)] 
       [("whole-string") 'whole])))
 
-You can see that @racket[string-match] looks remarkably like match. The only thing that is different
-is the pattern syntax, which is composed of a sequence of strings and identifiers. Each pattern should
-be compiled into a regular expression by embedding string literals directly into the result using
+You can see that @racket[string-match] looks remarkably like @racket[match]. The only difference is
+the pattern syntax, which is composed of a sequence of strings and identifiers. Each pattern should be
+compiled into a regular expression by embedding string literals directly into the result using
 @racket[regexp-quote], and identifiers should become capture groups of zero or more characters,
 @racketvalfont{(.*)}.
 
